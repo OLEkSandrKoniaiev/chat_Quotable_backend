@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "allowImportingTsExtensions": true,
+    // "allowImportingTsExtensions": true,
 
     // Other Outputs
     //    "sourceMap": true,

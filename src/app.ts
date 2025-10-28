@@ -3,6 +3,9 @@ import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 
+import chatRoutes from './modules/chats/chat.routes';
+import messageRoutes from './modules/messages/message.routes';
+
 const app = express();
 
 app.use(express.json());
@@ -14,6 +17,9 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   app.use(morgan('dev'));
 }
+
+app.use('/chats', chatRoutes);
+app.use('/messages', messageRoutes);
 
 app.post('/', (req, res) => {
   const { name } = req.body;

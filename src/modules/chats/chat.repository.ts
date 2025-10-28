@@ -1,5 +1,5 @@
 import { ChatModel, IChatDocument } from './chat.model';
-import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces.ts';
+import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces';
 
 export class ChatRepository {
   static async findAll(): Promise<IChatDocument[]> {

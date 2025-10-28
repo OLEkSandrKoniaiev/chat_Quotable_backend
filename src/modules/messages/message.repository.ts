@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 import { MessageModel, IMessageDocument } from './message.model';
-import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces.ts';
+import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces';
 import {
   IPaginationOptions,
   IPaginatedResult,
-} from '../../common/interfaces/pagination.interfaces.ts';
+} from '../../common/interfaces/pagination.interfaces';
 
 export class MessageRepository {
   static async findByChatId(
