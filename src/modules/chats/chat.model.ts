@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { IChat } from './chat.interfaces.ts';
+import { MessageModel } from '../messages/message.model.ts';
 
 export interface IChatDocument extends IChat, Document {}
 
@@ -37,5 +38,14 @@ const ChatSchema = new Schema<IChatDocument>(
     },
   },
 );
+
+ChatSchema.pre('deleteOne', { document: false, query: true }, async function () {
+  const filter = this.getFilter();
+  const chatId = filter._id;
+
+  if (chatId) {
+    await MessageModel.deleteMany({ chatId: chatId });
+  }
+});
 
 export const ChatModel = mongoose.model<IChatDocument>('Chat', ChatSchema);

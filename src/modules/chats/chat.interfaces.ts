@@ -7,3 +7,13 @@ export interface IChat {
   lastMessageTimestamp: Date;
   unreadCount: number;
 }
+
+export interface IChatCreateDTO {
+  firstName: string;
+  lastName?: string;
+}
+
+export interface IChatUpdateDTO {
+  firstName?: string;
+  lastName?: string;
+}
