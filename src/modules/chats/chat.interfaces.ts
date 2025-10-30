@@ -1,6 +1,7 @@
 export interface IChat {
   firstName: string;
   lastName: string;
+  avatarUrl?: string;
 
   // optimization for UI
   lastMessage: string;
@@ -11,9 +12,11 @@ export interface IChat {
 export interface IChatCreateDTO {
   firstName: string;
   lastName?: string;
+  avatarUrl?: string;
 }
 
 export interface IChatUpdateDTO {
   firstName?: string;
   lastName?: string;
+  avatarUrl?: string;
 }

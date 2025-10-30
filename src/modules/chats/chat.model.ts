@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IChat } from './chat.interfaces.ts';
-import { MessageModel } from '../messages/message.model.ts';
+import { IChat } from './chat.interfaces';
+import { MessageModel } from '../messages/message.model';
+import { FileService } from '../../common/services/file.service';
 
 export interface IChatDocument extends IChat, Document {}
 
@@ -11,6 +12,10 @@ const ChatSchema = new Schema<IChatDocument>(
       required: true,
     },
     lastName: {
+      type: String,
+      required: false,
+    },
+    avatarUrl: {
       type: String,
       required: false,
     },
@@ -44,7 +49,16 @@ ChatSchema.pre('deleteOne', { document: false, query: true }, async function () 
   const chatId = filter._id;
 
   if (chatId) {
-    await MessageModel.deleteMany({ chatId: chatId });
+    const chatToDelete = await this.model.findOne(filter);
+    await Promise.all([
+      MessageModel.deleteMany({ chatId: chatId }),
+
+      (async () => {
+        if (chatToDelete?.avatarUrl) {
+          await FileService.deleteAvatarCloudinary(chatToDelete.avatarUrl);
+        }
+      })(),
+    ]);
   }
 });
 

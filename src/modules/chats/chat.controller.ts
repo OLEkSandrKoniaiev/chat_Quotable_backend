@@ -1,16 +1,14 @@
 import { Request, Response } from 'express';
 import { ChatRepository } from './chat.repository';
 import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces';
+import { FileService } from '../../common/services/file.service';
 
 export class ChatController {
   static async create(req: Request, res: Response) {
     try {
-      const { firstName, lastName } = req.body as IChatCreateDTO;
+      const dto = req.body as IChatCreateDTO;
 
-      const newChat = await ChatRepository.create({
-        firstName,
-        lastName,
-      });
+      const newChat = await ChatRepository.create(dto);
 
       return res.status(201).json(newChat);
     } catch (e: unknown) {
@@ -61,10 +59,21 @@ export class ChatController {
       const { id } = req.params;
       const dto = req.body as IChatUpdateDTO;
 
-      const updatedChat = await ChatRepository.updateById(id, dto);
-
-      if (!updatedChat) {
+      const chatBeforeUpdate = await ChatRepository.findById(id);
+      if (!chatBeforeUpdate) {
         return res.status(404).json({ error: 'Chat not found.' });
+      }
+      const oldAvatarUrl = chatBeforeUpdate.avatarUrl;
+
+      const updatedChat = await ChatRepository.updateById(id, dto);
+      if (!updatedChat) {
+        return res.status(404).json({ error: 'Chat not found after update.' });
+      }
+
+      if (dto.avatarUrl && oldAvatarUrl) {
+        FileService.deleteAvatarCloudinary(oldAvatarUrl).catch((err) => {
+          console.error('Failed to delete old avatar:', err);
+        });
       }
 
       return res.status(200).json(updatedChat);

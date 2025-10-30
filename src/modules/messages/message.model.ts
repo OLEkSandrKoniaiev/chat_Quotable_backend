@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IChatDocument } from '../chats/chat.model.ts';
-import { IMessage } from './message.interfaces.ts';
+import { IChatDocument } from '../chats/chat.model';
+import { IMessage } from './message.interfaces';
 
 export interface IMessageDocument extends IMessage, Document {
   chatId: IChatDocument['_id'];
