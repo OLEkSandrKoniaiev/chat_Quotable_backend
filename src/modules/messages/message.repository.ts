@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 import { MessageModel, IMessageDocument } from './message.model';
 import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces';
 import {
@@ -6,8 +7,8 @@ import {
   IPaginatedResult,
 } from '../../common/interfaces/pagination.interfaces';
 
-export class MessageRepository {
-  static async findByChatId(
+class MessageRepository {
+  async findByChatId(
     chatId: string,
     options: IPaginationOptions,
   ): Promise<IPaginatedResult<IMessageDocument>> {
@@ -37,11 +38,11 @@ export class MessageRepository {
     };
   }
 
-  static async findById(id: string): Promise<IMessageDocument | null> {
+  async findById(id: string): Promise<IMessageDocument | null> {
     return MessageModel.findById(id);
   }
 
-  static async create(chatId: string, dto: IMessageCreateDTO): Promise<IMessageDocument> {
+  async create(chatId: string, dto: IMessageCreateDTO): Promise<IMessageDocument> {
     const newMessage = new MessageModel({
       ...dto,
       chatId: chatId,
@@ -50,12 +51,14 @@ export class MessageRepository {
     return await newMessage.save();
   }
 
-  static async updateById(id: string, dto: IMessageUpdateDTO): Promise<IMessageDocument | null> {
+  async updateById(id: string, dto: IMessageUpdateDTO): Promise<IMessageDocument | null> {
     return MessageModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
-  static async deleteById(id: string): Promise<boolean> {
+  async deleteById(id: string): Promise<boolean> {
     const result = await MessageModel.deleteOne({ _id: id });
     return result.deletedCount > 0;
   }
 }
+
+export const messageRepository = new MessageRepository();

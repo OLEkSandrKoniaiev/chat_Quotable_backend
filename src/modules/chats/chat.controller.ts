@@ -1,14 +1,15 @@
 import { Request, Response } from 'express';
-import { ChatRepository } from './chat.repository';
+
+import { chatRepository } from './chat.repository';
 import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces';
 import { FileService } from '../../common/services/file.service';
 
-export class ChatController {
-  static async create(req: Request, res: Response) {
+class ChatController {
+  async create(req: Request, res: Response) {
     try {
       const dto = req.body as IChatCreateDTO;
 
-      const newChat = await ChatRepository.create(dto);
+      const newChat = await chatRepository.create(dto);
 
       return res.status(201).json(newChat);
     } catch (e: unknown) {
@@ -17,15 +18,15 @@ export class ChatController {
     }
   }
 
-  static async getAll(req: Request, res: Response) {
+  async getAll(req: Request, res: Response) {
     try {
       const { q } = req.query;
       let chats;
 
       if (q && typeof q === 'string') {
-        chats = await ChatRepository.search(q);
+        chats = await chatRepository.search(q);
       } else {
-        chats = await ChatRepository.findAll();
+        chats = await chatRepository.findAll();
       }
 
       return res.status(200).json(chats);
@@ -35,10 +36,10 @@ export class ChatController {
     }
   }
 
-  static async getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const chat = await ChatRepository.findById(id);
+      const chat = await chatRepository.findById(id);
 
       if (!chat) {
         return res.status(404).json({ error: 'Chat not found.' });
@@ -54,18 +55,18 @@ export class ChatController {
     }
   }
 
-  static async update(req: Request, res: Response) {
+  async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const dto = req.body as IChatUpdateDTO;
 
-      const chatBeforeUpdate = await ChatRepository.findById(id);
+      const chatBeforeUpdate = await chatRepository.findById(id);
       if (!chatBeforeUpdate) {
         return res.status(404).json({ error: 'Chat not found.' });
       }
       const oldAvatarUrl = chatBeforeUpdate.avatarUrl;
 
-      const updatedChat = await ChatRepository.updateById(id, dto);
+      const updatedChat = await chatRepository.updateById(id, dto);
       if (!updatedChat) {
         return res.status(404).json({ error: 'Chat not found after update.' });
       }
@@ -86,10 +87,10 @@ export class ChatController {
     }
   }
 
-  static async delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const success = await ChatRepository.deleteById(id);
+      const success = await chatRepository.deleteById(id);
 
       if (!success) {
         return res.status(404).json({ error: 'Chat not found.' });
@@ -105,3 +106,5 @@ export class ChatController {
     }
   }
 }
+
+export const chatController = new ChatController();

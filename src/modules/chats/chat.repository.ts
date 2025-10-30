@@ -1,12 +1,12 @@
 import { ChatModel, IChatDocument } from './chat.model';
 import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces';
 
-export class ChatRepository {
-  static async findAll(): Promise<IChatDocument[]> {
+class ChatRepository {
+  async findAll(): Promise<IChatDocument[]> {
     return ChatModel.find().sort({ lastMessageTimestamp: -1 });
   }
 
-  static async search(query: string): Promise<IChatDocument[]> {
+  async search(query: string): Promise<IChatDocument[]> {
     const searchRegex = new RegExp(query, 'i'); // 'i' - insensitive case
 
     return ChatModel.find({
@@ -14,20 +14,20 @@ export class ChatRepository {
     }).sort({ lastMessageTimestamp: -1 });
   }
 
-  static async findById(id: string): Promise<IChatDocument | null> {
+  async findById(id: string): Promise<IChatDocument | null> {
     return ChatModel.findById(id);
   }
 
-  static async create(dto: IChatCreateDTO): Promise<IChatDocument> {
+  async create(dto: IChatCreateDTO): Promise<IChatDocument> {
     const newChat = new ChatModel(dto);
     return await newChat.save();
   }
 
-  static async updateById(id: string, dto: IChatUpdateDTO): Promise<IChatDocument | null> {
+  async updateById(id: string, dto: IChatUpdateDTO): Promise<IChatDocument | null> {
     return ChatModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
-  static async deleteById(id: string): Promise<boolean> {
+  async deleteById(id: string): Promise<boolean> {
     // ChatSchema has a Mongoose middleware that deletes all messages before deleting the chat
     const result = await ChatModel.deleteOne({ _id: id });
     return result.deletedCount > 0;
@@ -35,11 +35,7 @@ export class ChatRepository {
 
   // --- Special methods for specific logic ---
 
-  static async updateLastMessage(
-    id: string,
-    messageContent: string,
-    timestamp: Date,
-  ): Promise<void> {
+  async updateLastMessage(id: string, messageContent: string, timestamp: Date): Promise<void> {
     await ChatModel.updateOne(
       { _id: id },
       {
@@ -51,11 +47,13 @@ export class ChatRepository {
     );
   }
 
-  static async incrementUnread(id: string): Promise<void> {
+  async incrementUnread(id: string): Promise<void> {
     await ChatModel.updateOne({ _id: id }, { $inc: { unreadCount: 1 } });
   }
 
-  static async resetUnread(id: string): Promise<void> {
+  async resetUnread(id: string): Promise<void> {
     await ChatModel.updateOne({ _id: id }, { $set: { unreadCount: 0 } });
   }
 }
+
+export const chatRepository = new ChatRepository();

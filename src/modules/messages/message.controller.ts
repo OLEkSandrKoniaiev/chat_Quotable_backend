@@ -1,19 +1,20 @@
 import { Request, Response } from 'express';
-import { MessageRepository } from './message.repository';
+
+import { messageRepository } from './message.repository';
 import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces';
 
-export class MessageController {
+class MessageController {
   /**
    * GET /api/chats/:chatId/messages?page=1&limit=30
    */
-  static async getAllByChatId(req: Request, res: Response) {
+  async getAllByChatId(req: Request, res: Response) {
     try {
       const { chatId } = req.params;
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 30;
 
-      const paginatedMessages = await MessageRepository.findByChatId(chatId, {
+      const paginatedMessages = await messageRepository.findByChatId(chatId, {
         page,
         limit,
       });
@@ -31,13 +32,13 @@ export class MessageController {
   /**
    * POST /api/chats/:chatId/messages
    */
-  static async create(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     try {
       const { chatId } = req.params;
 
       const { sender, content } = req.body as IMessageCreateDTO;
 
-      const newMessage = await MessageRepository.create(chatId, {
+      const newMessage = await messageRepository.create(chatId, {
         sender,
         content,
       });
@@ -58,10 +59,10 @@ export class MessageController {
   /**
    * GET /api/messages/:id
    */
-  static async getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const message = await MessageRepository.findById(id);
+      const message = await messageRepository.findById(id);
 
       if (!message) {
         return res.status(404).json({ error: 'Message not found.' });
@@ -80,12 +81,12 @@ export class MessageController {
   /**
    * PUT /api/messages/:id
    */
-  static async update(req: Request, res: Response) {
+  async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const dto = req.body as IMessageUpdateDTO;
 
-      const updatedMessage = await MessageRepository.updateById(id, dto);
+      const updatedMessage = await messageRepository.updateById(id, dto);
 
       if (!updatedMessage) {
         return res.status(404).json({ error: 'Message not found.' });
@@ -104,10 +105,10 @@ export class MessageController {
   /**
    * DELETE /api/messages/:id
    */
-  static async delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const success = await MessageRepository.deleteById(id);
+      const success = await messageRepository.deleteById(id);
 
       if (!success) {
         return res.status(404).json({ error: 'Message not found.' });
@@ -123,3 +124,5 @@ export class MessageController {
     }
   }
 }
+
+export const messageController = new MessageController();

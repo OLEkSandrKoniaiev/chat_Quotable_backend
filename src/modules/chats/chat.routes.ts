@@ -1,9 +1,11 @@
 import express from 'express';
 import multer from 'multer';
-import { ChatController } from './chat.controller';
-import { MessageController } from '../messages/message.controller';
+
+import { chatController } from './chat.controller';
+import { messageController } from '../messages/message.controller';
 import { handleMulterError } from '../../common/middlewares/multer.middleware';
 import { handleAvatarUpload } from '../../common/middlewares/fileUpload.middleware';
+import { protect } from '../../common/middlewares/auth.middleware';
 
 const router = express.Router();
 
@@ -12,25 +14,27 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-router.get('/', ChatController.getAll);
+router.get('/', protect, chatController.getAll);
 router.post(
   '/',
+  protect,
   upload.single('avatarUrl'),
   handleMulterError,
   handleAvatarUpload,
-  ChatController.create,
+  chatController.create,
 );
-router.get('/:id', ChatController.getById);
+router.get('/:id', protect, chatController.getById);
 router.put(
   '/:id',
+  protect,
   upload.single('avatarUrl'),
   handleMulterError,
   handleAvatarUpload,
-  ChatController.update,
+  chatController.update,
 );
-router.delete('/:id', ChatController.delete);
+router.delete('/:id', protect, chatController.delete);
 
-router.get('/:chatId/messages', MessageController.getAllByChatId);
-router.post('/:chatId/messages', MessageController.create);
+router.get('/:chatId/messages', protect, messageController.getAllByChatId);
+router.post('/:chatId/messages', protect, messageController.create);
 
 export default router;
