@@ -2,8 +2,11 @@ import mongoose, { Document, Schema } from 'mongoose';
 import { IChat } from './chat.interfaces';
 import { MessageModel } from '../messages/message.model';
 import { FileService } from '../../common/services/file.service';
+import { IUserDocument } from '../users/user.model';
 
-export interface IChatDocument extends IChat, Document {}
+export interface IChatDocument extends IChat, Document {
+  userId: IUserDocument['_id'];
+}
 
 const ChatSchema = new Schema<IChatDocument>(
   {
@@ -31,6 +34,11 @@ const ChatSchema = new Schema<IChatDocument>(
       type: Number,
       required: true,
       default: 0,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
   },
   {

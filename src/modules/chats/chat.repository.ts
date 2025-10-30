@@ -2,42 +2,51 @@ import { ChatModel, IChatDocument } from './chat.model';
 import { IChatCreateDTO, IChatUpdateDTO } from './chat.interfaces';
 
 class ChatRepository {
-  async findAll(): Promise<IChatDocument[]> {
-    return ChatModel.find().sort({ lastMessageTimestamp: -1 });
+  async findAll(userId: string): Promise<IChatDocument[]> {
+    return ChatModel.find({ userId: userId }).sort({ lastMessageTimestamp: -1 });
   }
 
-  async search(query: string): Promise<IChatDocument[]> {
+  async search(userId: string, query: string): Promise<IChatDocument[]> {
     const searchRegex = new RegExp(query, 'i'); // 'i' - insensitive case
 
     return ChatModel.find({
+      userId: userId,
       $or: [{ firstName: { $regex: searchRegex } }, { lastName: { $regex: searchRegex } }],
     }).sort({ lastMessageTimestamp: -1 });
   }
 
-  async findById(id: string): Promise<IChatDocument | null> {
-    return ChatModel.findById(id);
+  async findById(userId: string, id: string): Promise<IChatDocument | null> {
+    return ChatModel.findOne({ _id: id, userId: userId });
   }
 
-  async create(dto: IChatCreateDTO): Promise<IChatDocument> {
-    const newChat = new ChatModel(dto);
+  async create(userId: string, dto: IChatCreateDTO): Promise<IChatDocument> {
+    const newChat = new ChatModel({
+      ...dto,
+      userId: userId,
+    });
     return await newChat.save();
   }
 
-  async updateById(id: string, dto: IChatUpdateDTO): Promise<IChatDocument | null> {
-    return ChatModel.findByIdAndUpdate(id, dto, { new: true });
+  async updateById(userId: string, id: string, dto: IChatUpdateDTO): Promise<IChatDocument | null> {
+    return ChatModel.findOneAndUpdate({ _id: id, userId: userId }, dto, { new: true });
   }
 
-  async deleteById(id: string): Promise<boolean> {
+  async deleteById(userId: string, id: string): Promise<boolean> {
     // ChatSchema has a Mongoose middleware that deletes all messages before deleting the chat
-    const result = await ChatModel.deleteOne({ _id: id });
+    const result = await ChatModel.deleteOne({ _id: id, userId: userId });
     return result.deletedCount > 0;
   }
 
   // --- Special methods for specific logic ---
 
-  async updateLastMessage(id: string, messageContent: string, timestamp: Date): Promise<void> {
-    await ChatModel.updateOne(
-      { _id: id },
+  async updateLastMessage(
+    userId: string,
+    id: string,
+    messageContent: string,
+    timestamp: Date,
+  ): Promise<boolean> {
+    const result = await ChatModel.updateOne(
+      { _id: id, userId: userId },
       {
         $set: {
           lastMessage: messageContent,
@@ -45,14 +54,23 @@ class ChatRepository {
         },
       },
     );
+    return result.modifiedCount > 0;
   }
 
-  async incrementUnread(id: string): Promise<void> {
-    await ChatModel.updateOne({ _id: id }, { $inc: { unreadCount: 1 } });
+  async incrementUnread(userId: string, id: string): Promise<boolean> {
+    const result = await ChatModel.updateOne(
+      { _id: id, userId: userId },
+      { $inc: { unreadCount: 1 } },
+    );
+    return result.modifiedCount > 0;
   }
 
-  async resetUnread(id: string): Promise<void> {
-    await ChatModel.updateOne({ _id: id }, { $set: { unreadCount: 0 } });
+  async resetUnread(userId: string, id: string): Promise<boolean> {
+    const result = await ChatModel.updateOne(
+      { _id: id, userId: userId },
+      { $set: { unreadCount: 0 } },
+    );
+    return result.modifiedCount > 0;
   }
 }
 

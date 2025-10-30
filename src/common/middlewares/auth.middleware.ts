@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { UserModel } from '../../modules/users/user.model';
+
 import { dotenvConfig } from '../../config/dotenv.config';
+import { userRepository } from '../../modules/users/user.repository';
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   let token;
@@ -17,13 +18,13 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   try {
     const decoded = jwt.verify(token, dotenvConfig.JWT_SECRET) as { sub: string };
 
-    const user = await UserModel.findById(decoded.sub).select('-password');
+    const user = await userRepository.findById(decoded.sub);
 
     if (!user) {
       return res.status(401).json({ error: 'Not authorized, user not found' });
     }
 
-    req.user = user;
+    req._user = user;
 
     next();
   } catch (e) {

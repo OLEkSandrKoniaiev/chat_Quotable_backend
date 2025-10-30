@@ -1,10 +1,9 @@
-// import { IUserDocument } from '../../../modules/users/user.model';
-import { IUser } from '../../../modules/users/user.inteerfaces';
+import { IUserDocument } from '../../../modules/users/user.model';
 
 declare global {
   namespace Express {
     export interface Request {
-      user?: IUser;
+      _user?: IUserDocument;
     }
   }
 }
