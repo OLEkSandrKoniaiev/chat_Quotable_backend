@@ -13,6 +13,9 @@ export interface IChatCreateDTO {
   firstName: string;
   lastName?: string;
   avatarUrl?: string;
+  lastMessage?: string;
+  lastMessageTimestamp?: Date;
+  unreadCount?: number;
 }
 
 export interface IChatUpdateDTO {

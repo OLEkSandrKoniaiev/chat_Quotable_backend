@@ -3,6 +3,7 @@ import { userRepository } from './user.repository';
 import { IUserCreateDTO, IUserUpdateDTO } from './user.inteerfaces';
 import { AuthService } from '../auth/auth.service';
 import { FileService } from '../../common/services/file.service';
+import { createPredefinedChats } from '../../common/utils/chat.utils';
 
 class UserController {
   /**
@@ -19,6 +20,9 @@ class UserController {
 
       const newUser = await userRepository.create(dto);
       const accessToken = AuthService.generateToken(newUser._id as string);
+
+      // (without await for reason)
+      createPredefinedChats(newUser._id as string);
 
       return res.status(201).json({ user: newUser, accessToken: accessToken });
     } catch (e: unknown) {
