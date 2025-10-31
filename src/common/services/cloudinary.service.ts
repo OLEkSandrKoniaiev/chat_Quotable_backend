@@ -2,7 +2,7 @@ import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';
 import { dotenvConfig } from '../../config/dotenv.config';
 
-export class CloudinaryService {
+class CloudinaryService {
   constructor() {
     cloudinary.config({
       cloud_name: dotenvConfig.CLOUDINARY_CLOUD_NAME,

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { messageRepository } from './message.repository';
 import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces';
+import { quotableService } from '../../common/services/quotable.service';
 
 class MessageController {
   /**
@@ -42,6 +43,8 @@ class MessageController {
         sender,
         content,
       });
+
+      quotableService.generateBotResponse(chatId);
 
       // TODO: Тут потрібно асинхронно оновити Chat.lastMessage
       // та запустити 3-секундний таймер для відповіді бота.
