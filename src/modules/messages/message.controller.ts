@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { messageRepository } from './message.repository';
 import { IMessageCreateDTO, IMessageUpdateDTO } from './message.interfaces';
 import { quotableService } from '../../common/services/quotable.service';
+import { chatRepository } from '../chats/chat.repository';
 
 class MessageController {
   /**
@@ -39,15 +40,16 @@ class MessageController {
 
       const { sender, content } = req.body as IMessageCreateDTO;
 
+      const userId = req._user!._id as string;
+
       const newMessage = await messageRepository.create(chatId, {
         sender,
         content,
       });
 
-      quotableService.generateBotResponse(chatId);
+      quotableService.generateBotResponse(userId, chatId);
 
-      // TODO: Тут потрібно асинхронно оновити Chat.lastMessage
-      // та запустити 3-секундний таймер для відповіді бота.
+      await chatRepository.updateLastMessage(userId, chatId, newMessage.content, new Date());
 
       return res.status(201).json(newMessage);
     } catch (e: unknown) {

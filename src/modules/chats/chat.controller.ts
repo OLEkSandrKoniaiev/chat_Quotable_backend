@@ -111,6 +111,27 @@ class ChatController {
       return res.status(500).json({ error: 'Something went wrong.' });
     }
   }
+
+  async markAsRead(req: Request, res: Response) {
+    try {
+      const userId = req._user!._id as string;
+      const { id: chatId } = req.params;
+
+      const success = await chatRepository.resetUnread(userId, chatId);
+
+      if (!success) {
+        return res.status(404).json({ error: 'Chat not found.' });
+      }
+
+      return res.status(204).send();
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'CastError') {
+        return res.status(400).json({ error: 'Invalid Chat ID format.' });
+      }
+      console.error('Error in ChatController.delete:', e);
+      return res.status(500).json({ error: 'Something went wrong.' });
+    }
+  }
 }
 
 export const chatController = new ChatController();

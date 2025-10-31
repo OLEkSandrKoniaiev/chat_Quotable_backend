@@ -2,6 +2,7 @@ import axios from 'axios';
 import https from 'https';
 
 import { messageRepository } from '../../modules/messages/message.repository';
+import { chatRepository } from '../../modules/chats/chat.repository';
 
 const API_BASE_URL = 'https://api.quotable.io';
 const RANDOM_QUOTE_URL = `${API_BASE_URL}/random`;
@@ -13,7 +14,7 @@ const FALLBACK_QUOTE = "Sorry, I can't find the quote right now. Please try agai
 // });
 
 class QuotableService {
-  public generateBotResponse(chatId: string): void {
+  public generateBotResponse(userId: string, chatId: string): void {
     setTimeout(async () => {
       let quoteContent: string;
 
@@ -41,11 +42,10 @@ class QuotableService {
           sender: 'bot' as const,
         };
 
-        await messageRepository.create(chatId, dto);
+        const newMessage = await messageRepository.create(chatId, dto);
 
-        // TODO: Тут ми також маємо оновити lastMessage в самому чаті.
-        // Можливо, це вже реалізовано в messageRepository.create
-        // або ми додамо це пізніше.
+        await chatRepository.updateLastMessage(userId, chatId, newMessage.content, new Date());
+        await chatRepository.incrementUnread(userId, chatId);
       } catch (dbError: unknown) {
         console.error(`[QuotableService] DB Save Error for chatId ${chatId}:`, dbError);
       }

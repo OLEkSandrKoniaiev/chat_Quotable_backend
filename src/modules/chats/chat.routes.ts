@@ -32,6 +32,7 @@ router.put(
   handleAvatarUpload,
   chatController.update,
 );
+router.patch('/:id/read', protect, chatController.markAsRead);
 router.delete('/:id', protect, chatController.delete);
 
 router.get('/:chatId/messages', protect, messageController.getAllByChatId);
