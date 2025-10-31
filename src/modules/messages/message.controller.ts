@@ -38,12 +38,12 @@ class MessageController {
     try {
       const { chatId } = req.params;
 
-      const { sender, content } = req.body as IMessageCreateDTO;
+      const { content } = req.body as IMessageCreateDTO;
 
       const userId = req._user!._id as string;
 
       const newMessage = await messageRepository.create(chatId, {
-        sender,
+        sender: 'user' as const,
         content,
       });
 

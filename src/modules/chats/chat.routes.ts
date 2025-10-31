@@ -6,6 +6,9 @@ import { messageController } from '../messages/message.controller';
 import { handleMulterError } from '../../common/middlewares/multer.middleware';
 import { handleAvatarUpload } from '../../common/middlewares/fileUpload.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
+import { validateRequest } from '../../common/middlewares/validateRequest.middleware';
+import { createChatSchema, updateChatSchema } from './chat.validation';
+import { createMessageSchema } from '../messages/messages.validation';
 
 const router = express.Router();
 
@@ -21,6 +24,7 @@ router.post(
   upload.single('avatarUrl'),
   handleMulterError,
   handleAvatarUpload,
+  validateRequest(createChatSchema),
   chatController.create,
 );
 router.get('/:id', protect, chatController.getById);
@@ -30,12 +34,18 @@ router.put(
   upload.single('avatarUrl'),
   handleMulterError,
   handleAvatarUpload,
+  validateRequest(updateChatSchema),
   chatController.update,
 );
 router.patch('/:id/read', protect, chatController.markAsRead);
 router.delete('/:id', protect, chatController.delete);
 
 router.get('/:chatId/messages', protect, messageController.getAllByChatId);
-router.post('/:chatId/messages', protect, messageController.create);
+router.post(
+  '/:chatId/messages',
+  protect,
+  validateRequest(createMessageSchema),
+  messageController.create,
+);
 
 export default router;
