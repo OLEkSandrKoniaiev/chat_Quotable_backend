@@ -25,6 +25,7 @@ router.post(
 );
 router.post('/login', validateRequest(loginUserSchema), userController.login);
 router.get('/', protect, userController.getAll);
+router.get('/me', protect, userController.getMe);
 router.get('/:id', protect, userController.getById);
 router.put(
   '/:id',

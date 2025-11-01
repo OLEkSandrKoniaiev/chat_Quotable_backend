@@ -109,6 +109,13 @@ class UserController {
   }
 
   /**
+   * GET /api/users/me
+   */
+  async getMe(req: Request, res: Response) {
+    res.status(200).json(req._user);
+  }
+
+  /**
    * PUT /api/users/:userId
    */
   async update(req: Request, res: Response) {
