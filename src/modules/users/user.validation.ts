@@ -3,7 +3,7 @@ import Joi from 'joi';
 // Minimum 8 characters, maximum 64.
 // At least one uppercase letter, one lowercase letter, one number, one special character.
 const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,64}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+.,;:?'"{}[\]<>-])[A-Za-z\d!@#$%^&*()_+.,;:?'"{}[\]<>-]{8,64}$/;
 
 // Joi's .email() is usually enough, but pattern() gives extra control.
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
