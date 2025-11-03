@@ -16,7 +16,6 @@ export const createUserSchema = Joi.object({
     'any.required': 'firstName is a required field.',
   }),
   lastName: Joi.string().min(1).max(32).messages({
-    // 'required' is not here, which is correct
     'string.empty': 'lastName cannot be empty.',
     'string.min': 'lastName should have a minimum length of {#limit}.',
     'string.max': 'lastName should have a maximum length of {#limit}.',
@@ -59,7 +58,7 @@ export const updateUserSchema = Joi.object({
     'string.min': 'lastName should have a minimum length of {#limit}.',
     'string.max': 'lastName should have a maximum length of {#limit}.',
   }),
-  // avatarUrl: Joi.string().uri().allow(null, '').messages({
-  //   'string.uri': 'avatarUrl must be a valid URL.',
-  // }),
+  avatarUrl: Joi.string().uri().allow(null, '').messages({
+    'string.uri': 'avatarUrl must be a valid URL.',
+  }),
 });

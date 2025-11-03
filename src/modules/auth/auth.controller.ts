@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Request, Response } from 'express';
 import { IUserDocument } from '../users/user.model';
 import { AuthService } from './auth.service';
+import { dotenvConfig } from '../../config/dotenv.config';
 
 export class AuthController {
   static googleLogin = passport.authenticate('google', {
@@ -14,7 +15,7 @@ export class AuthController {
 
     const token = AuthService.generateToken(user._id as string);
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = dotenvConfig.FRONTEND_URL || 'http://localhost:5173';
 
     res.redirect(`${frontendUrl}/auth/success?token=${token}`);
   }

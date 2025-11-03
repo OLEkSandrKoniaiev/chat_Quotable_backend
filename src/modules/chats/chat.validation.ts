@@ -32,4 +32,7 @@ export const updateChatSchema = Joi.object({
     'string.min': 'lastName should have a minimum length of {#limit}.',
     'string.max': 'lastName should have a maximum length of {#limit}.',
   }),
+  avatarUrl: Joi.string().uri().allow(null, '').messages({
+    'string.uri': 'avatarUrl must be a valid URL.',
+  }),
 });

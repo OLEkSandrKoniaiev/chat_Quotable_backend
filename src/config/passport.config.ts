@@ -4,6 +4,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { dotenvConfig } from './dotenv.config';
 import { userRepository } from '../modules/users/user.repository';
 import { IUserDocument } from '../modules/users/user.model';
+import { createPredefinedChats } from '../common/utils/chat.utils';
 
 const googleStrategy = new GoogleStrategy(
   {
@@ -39,6 +40,8 @@ const googleStrategy = new GoogleStrategy(
           lastName: profile.name?.familyName,
           avatarUrl: profile.photos?.[0]?.value,
         });
+
+        createPredefinedChats(user._id as string);
       }
 
       done(null, user);
