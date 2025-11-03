@@ -15,7 +15,7 @@ export class AuthController {
 
     const token = AuthService.generateToken(user._id as string);
 
-    const frontendUrl = dotenvConfig.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = dotenvConfig.FRONTEND_URL || 'http://localhost:4173';
 
     res.redirect(`${frontendUrl}/auth/success?token=${token}`);
   }

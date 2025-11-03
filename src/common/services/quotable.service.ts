@@ -9,9 +9,9 @@ const RANDOM_QUOTE_URL = `${API_BASE_URL}/random`;
 
 const FALLBACK_QUOTE = "Sorry, I can't find the quote right now. Please try again later.";
 
-// const httpsAgent = new https.Agent({
-//   rejectUnauthorized: false,
-// });
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
 
 class QuotableService {
   public generateBotResponse(userId: string, chatId: string): void {
@@ -23,7 +23,7 @@ class QuotableService {
           params: {
             maxLength: 100,
           },
-          // httpsAgent: httpsAgent,
+          httpsAgent: httpsAgent,
         });
 
         if (response.data?.content) {
